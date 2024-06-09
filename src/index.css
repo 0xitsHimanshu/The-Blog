@@ -35,7 +35,7 @@
     }
 
     .navbar{
-        @apply z-10 sticky top-0 flex items-center gap-12 w-full px-[5vw] py-5 h-[80px] border-b border-grey bg-white;
+        @apply z-10 sticky top-0 flex items-center gap-6 w-full px-[5vw] py-5 h-[80px] border-b border-grey bg-white;
     }
 
     .h-cover{
