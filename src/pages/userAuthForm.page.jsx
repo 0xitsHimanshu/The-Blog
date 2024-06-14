@@ -1,15 +1,40 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import InputBox from "../components/input.component";
 import googleIcon from "../imgs/google.png";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import AnimationWrapper from "../common/page-animation";
 import { Toaster, toast } from "react-hot-toast";
+import axios from "axios";
+import { StoreinSession } from "../common/session";
+import { UserContext } from "../App";
+
+
 const UserAuthForm = ({ type }) => {
   const authForm = useRef();
+  let {userAuth: {accessToken}, setUserAuth } = useContext(UserContext)
+
+  console.log(accessToken);
+
+  const userAuthThroughServer = (serverRoute, formData) => {
+    
+    axios.post(import.meta.env.VITE_SERVER_URL+"/users"+serverRoute, formData)
+     .then(({data})=>{
+        StoreinSession("user", JSON.stringify(data));
+        setUserAuth(data);
+
+     })
+     .catch(({response})=>{
+        toast.error(response.data.error);
+     })
+
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    //defining the server route
+    let serverRoute = type == "sign-in" ? "/signin" : "/signup";
+    
     // regex for email and password
     let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
     let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
@@ -21,19 +46,25 @@ const UserAuthForm = ({ type }) => {
       formData[key] = value;
     });
 
-    let { fullname, email, password } = formData;
+    let { name, email, password } = formData;
 
-    if (fullname)
-      if (fullname.length < 3)
+    if (name)
+      if (name.length < 3)
         return toast.error("Name should be atleast 3 characters long");
     if (!emailRegex.test(email)) return toast.error("Invalid email");
     if (!passwordRegex.test(password))
       return toast.error(
         "Password should be atleast 6 characters long and should contain atleast 1 uppercase letter, 1 lowercase letter and 1 number"
       );
+
+    userAuthThroughServer(serverRoute, formData);
   };
 
   return (
+    
+    accessToken ?
+        <Navigate to="/" />
+    :
     <AnimationWrapper key={type}>
       <section className="h-cover flex items-center justify-center">
         <Toaster />
@@ -44,7 +75,7 @@ const UserAuthForm = ({ type }) => {
 
           {type != "sign-in" ? (
             <InputBox
-              name="fullname"
+              name="name"
               type="text"
               placeholder="Name"
               icon="fi-rr-user"
