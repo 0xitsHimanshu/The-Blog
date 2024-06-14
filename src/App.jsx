@@ -11,10 +11,8 @@ const App = () => {
     const [userAuth, setUserAuth] = useState({});
 
     useEffect(()=>{
-
         let userInSession = lookinSession("user");
         userInSession ? setUserAuth(JSON.parse(userInSession)) : setUserAuth({accessToken: null});
-
     },[])
     
     return (
