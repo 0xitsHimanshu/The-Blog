@@ -1,10 +1,24 @@
-import React, {useState} from 'react'
-import { Link, Outlet } from 'react-router-dom'
-import logo from '../imgs/logo.png'
+import React, { useContext, useState } from "react";
+import { Link, Outlet } from "react-router-dom";
+import { UserContext } from "../App";
+import logo from "../imgs/logo.png";
+import UserNavigationPanel from "./user-navigation.component";
 
 const Navbar = () => {
+  const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
+  const [userNavPanel, setUserNavPanel] = useState(false);
 
-    const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
+  const { userAuth, userAuth: { accessToken, user: { profile_img } = {} } = {} } = useContext(UserContext); // destructuring the userAuth object to get accessToken and user object from it 
+
+  const handleUserNavPanel = () => {
+    setUserNavPanel((currentVal) => !currentVal);
+  };
+
+  const handleUserNavPanelBlur = () => {
+      setTimeout(() => {
+          setUserNavPanel(false);
+      }, 200)
+  };
 
   return (
     <>
@@ -42,18 +56,43 @@ const Navbar = () => {
           <p>Write</p>
         </Link>
 
-        <Link className="btn-dark py-3" to="/signin">
-          Sign In
-        </Link>
+        { accessToken ? (
+            <>
+              <Link to={"/dashboard/notification"}>
+                <button className="w-12 h-12 rounded-full bg-grey relative hover:bg-black/10">
+                  <i className="fi fi-rr-bell text-2xl block mt-1"></i>
+                </button>
+              </Link>
 
-        <Link className="btn-light py-2 hidden md:block" to="/signup">
-          Sign Up
-        </Link>
+              <div className="relative" onClick={handleUserNavPanel} onBlur={handleUserNavPanelBlur}>
+                  <button className="w-12 h-12 mt-1">
+                    <img src={profile_img} className="w-full h-full object-cover rounded-full" />
+                  </button>
+
+                  {
+                    userNavPanel ? 
+                      <UserNavigationPanel />
+                    : ""
+                  }
+
+              </div>
+            </>
+        ) : (
+          <>
+            <Link className="btn-dark py-3" to="/signin">
+              Sign In
+            </Link>
+
+            <Link className="btn-light py-2 hidden md:block" to="/signup">
+              Sign Up
+            </Link>
+          </>
+        )}
       </nav>
 
       <Outlet />
     </>
   );
-}
+};
 
 export default Navbar;
