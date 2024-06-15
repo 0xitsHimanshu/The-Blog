@@ -1,14 +1,14 @@
 import React, { useContext, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
-import logo from "../imgs/logo.png";
 import { UserContext } from "../App";
+import logo from "../imgs/logo.png";
+import UserNavigationPanel from "./user-navigation.component";
 
 const Navbar = () => {
   const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
 
   const { userAuth, userAuth: { accessToken, user: { profile_img } = {} } = {} } = useContext(UserContext); // destructuring the userAuth object to get accessToken and user object from it 
 
-  // console.log(profile_img);
   return (
     <>
       <nav className="navbar">
@@ -57,8 +57,8 @@ const Navbar = () => {
                   <button className="w-12 h-12 mt-1">
                     <img src={profile_img} className="w-full h-full object-cover rounded-full" />
                   </button>
+                  <UserNavigationPanel />
               </div>
-
             </>
         ) : (
           <>
