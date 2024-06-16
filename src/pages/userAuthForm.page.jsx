@@ -7,26 +7,27 @@ import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
 import { StoreinSession } from "../common/session";
 import { UserContext } from "../App";
-
+import { authWithGoogle } from "../common/firebase";
 
 const UserAuthForm = ({ type }) => {
   const authform = useRef(null);
-  let {userAuth: {accessToken}, setUserAuth } = useContext(UserContext)
+  let {
+    userAuth: { accessToken },
+    setUserAuth,
+  } = useContext(UserContext);
 
-//   console.log(accessToken);
+  //   console.log(accessToken);
 
   const userAuthThroughServer = (serverRoute, formData) => {
-    
-    axios.post(import.meta.env.VITE_SERVER_URL+"/users"+serverRoute, formData)
-     .then(({data})=>{
+    axios
+      .post(import.meta.env.VITE_SERVER_URL + "/users" + serverRoute, formData)
+      .then(({ data }) => {
         StoreinSession("user", JSON.stringify(data));
         setUserAuth(data);
-
-     })
-     .catch(({response})=>{
+      })
+      .catch(({ response }) => {
         toast.error(response.data.error);
-     })
-
+      });
   };
 
   const handleSubmit = (e) => {
@@ -34,7 +35,7 @@ const UserAuthForm = ({ type }) => {
 
     //defining the server route
     let serverRoute = type == "sign-in" ? "/signin" : "/signup";
-    
+
     // regex for email and password
     let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
     let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
@@ -60,11 +61,22 @@ const UserAuthForm = ({ type }) => {
     userAuthThroughServer(serverRoute, formData);
   };
 
-  return (
-    
-    accessToken ?
-        <Navigate to="/" />
-    :
+  const handleGoogleAuth =  (e) => {
+
+    e.preventDefault();
+
+    authWithGoogle().then( user => {
+        console.log(user);
+    }).catch( err => {
+        toast.error("Trouble login through google");
+        return console.log(err);
+    });
+
+  };
+
+  return accessToken ? (
+    <Navigate to="/" />
+  ) : (
     <AnimationWrapper key={type}>
       <section className="h-cover flex items-center justify-center">
         <Toaster />
@@ -112,12 +124,15 @@ const UserAuthForm = ({ type }) => {
             <hr className="w-1/2 border-black" />
           </div>
 
-          <button className="btn-dark flex items-center justify-center gap-4 w-[90%] center">
+          <button className="btn-dark flex items-center justify-center gap-4 w-[90%] center"
+                  onClick={handleGoogleAuth}  
+          >
             <img src={googleIcon} className="w-5" />
             continue with google
           </button>
 
-          {type == "sign-in" ? (
+          { 
+            type == "sign-in" ? (
             <p className="mt-6 text-dark-grey text-xl text-center">
               Don't have an account?
               <Link to="/signup" className="underline text-black text-xl ml-1">
