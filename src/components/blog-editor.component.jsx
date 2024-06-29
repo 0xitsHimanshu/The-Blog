@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import logo from "../imgs/logo.png";
 import defaultBanner from "../imgs/blog banner.png"
 import AnimationWrapper from "../common/page-animation";
+import { uploadImage } from "../common/aws";
 
 const BlogEditor = () => {
+
+  const blogBannerRef = useRef();
+
+  const handleBannerUpload = (e) => {
+    let img = e.target.files[0];
+    
+    if(img){
+      uploadImage(img).then((url) => {
+        if(url){
+          blogBannerRef.current.src = url;
+        }
+      })
+    }
+
+  }
+
   return (
     <>
       <nav className="navbar">
@@ -22,13 +39,14 @@ const BlogEditor = () => {
         <section>
           <div className="mx-auto max-w-[900px] w-full">
                 <div className="relative aspect-video hover:opacity-80 bg-white border-4 border-grey rounded-2xl">
-                    <img src={defaultBanner} className="z-20"/>
                     <label htmlFor="uploadBanner">
+                        <img ref={blogBannerRef} src={defaultBanner} className="z-20"/>
                         <input
-                        type="file"
-                        id="uploadBanner"
-                        accept=".png .jpeg .jpg"
-                        hidden
+                          type="file"
+                          id="uploadBanner"
+                          accept=".png, .jpeg, .jpg"
+                          hidden
+                          onChange={handleBannerUpload}
                         />
                     </label>
                 </div>
