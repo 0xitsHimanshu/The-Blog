@@ -7,8 +7,9 @@ export const uploadImage = async (img) => {
         .get(import.meta.env.VITE_SERVER_URL +"/aws/get-upload-url")
         .then(async ({ data: { uploadUrl }}) => {
             
-            console.log("Uploading image to: ", uploadUrl);
+            // console.log("Uploading image to: ", uploadUrl);
 
+            //Using PUT method to upload image to S3 bucket
             await axios({
                 method: "PUT",
                 url: uploadUrl,
@@ -16,7 +17,6 @@ export const uploadImage = async (img) => {
                 data: img
             })
             .then(() => {
-                console.log("Image uploaded successfully")
                 imgUrl = uploadUrl.split("?")[0];
             });
         });
