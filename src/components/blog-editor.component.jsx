@@ -18,7 +18,7 @@ const BlogEditor = () => {
   useEffect(()=>{
     setTextEditor(new EditorJS({
       holder: "textEditor",
-      data: '',
+      data: content,
       tools: tools,
       placeholder: "Start writing your blog...",
     }))
@@ -67,24 +67,24 @@ const BlogEditor = () => {
   }
 
   const handlePublishEvent = () => {
-    if (!banner.length) return toast.error("Please upload a banner image");
-    if (!title.length) return toast.error("Please provide a title");
+    // if (!banner.length) return toast.error("Please upload a banner image");
+    // if (!title.length) return toast.error("Please provide a title");
 
-    if (textEditor.isReady) {
+    //if (textEditor.isReady) {
       textEditor
         .save()
         .then((data) => {
-          if (data.blocks.length) {
+          //if (data.blocks.length) {
             setBlog({ ...blog, content: data });
             setEditorState("publish");
-          } else {
+          //} else {
             return toast.error("Please write something to publish 📝");
-          }
+          //}
         })
         .catch((err) => {
           console.log(err);
         });
-    }
+    //}
   };
 
 
@@ -129,6 +129,7 @@ const BlogEditor = () => {
                 </div>
 
                 <textarea
+                  defaultValue={title}
                   placeholder="Blog Title"
                   className="text-4xl font-mmedium w-full h-30 outline-none resize-none mt-10 leading-tight placeholder:opacity-40"
                   onKeyDown={handleTitleKeyDown}
