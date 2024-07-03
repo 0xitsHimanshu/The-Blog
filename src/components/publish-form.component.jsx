@@ -4,17 +4,36 @@ import { Toaster } from "react-hot-toast";
 import { EditorContext } from "../pages/editor.pages";
 
 const PublishForm = () => {
+  const characterLimit = 200;
   let {
+    blog,
     blog: { banner, title, tags, des },
     setEditorState,
+    setBlog
   } = useContext(EditorContext);
+
   const handleCloseEvent = () => {
     setEditorState("editor");
   };
 
+  const handleBlogTitleChange = (e) =>{
+    let input = e.target;
+    setBlog({...blog, title: input.value})
+  };
+
+  const handleBlogDesChange = (e) =>{
+    let input = e.target;
+    setBlog({...blog, des: input.value})
+  }
+
+  const handleTitleKeyDown = (e) => {
+    if(e.keyCode == 13)
+        e.preventDefault();
+  };
+
   return (
     <AnimationWrapper>
-      <section>
+      <section className="w-screen min-h-screen grid items-center lg:grid-cols-2 py-16 lg:gap-4">
         <Toaster />
 
         <button
@@ -36,8 +55,29 @@ const PublishForm = () => {
           </h1>
 
           <p className="font-gelasio line-clamp-2 text-xl leading-7 mt-4">{des}</p>
-
         </div>
+
+        <div className="border-grey lg:border-1 lg:pl-8">
+          <p className="text-dark-grey mb-1 mt-9">Blog Title</p>
+          <input type="text" placeholder="Blog Title" defaultValue={title} className="input-box pl-4" onChange={handleBlogTitleChange}/>
+
+          <p className="text-dark-grey mb-1 mt-9">Short description about your blog</p>
+          <textarea 
+            maxLength={characterLimit}
+            defaultValue={des}
+            className="h-40 resize-none input-box pl-4"
+            onChange={handleBlogDesChange}
+            onKeyDown={handleTitleKeyDown}
+          >
+
+          </textarea>
+
+          <p className="mt-1 teext-dark-grey text-sm text-right">{ characterLimit - des.length} characters left</p>
+
+          
+          
+        </div>
+
       </section>
     </AnimationWrapper>
   );
