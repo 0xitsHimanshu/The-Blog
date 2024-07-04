@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
 import AnimationWrapper from "../common/page-animation";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { EditorContext } from "../pages/editor.pages";
 import Tag from "./tags.component";
 
 const PublishForm = () => {
   const characterLimit = 200;
+  const tagLimit = 10;
+
   let {
     blog,
     blog: { banner, title, tags, des },
@@ -32,6 +34,23 @@ const PublishForm = () => {
         e.preventDefault();
   };
 
+  const handleTagKeydDown = (e) => {
+    if(e.keyCode == 13 || e.keyCode ==188){
+      e.preventDefault();
+
+      let tag = e.target.value;
+
+      if(tags.length < tagLimit){
+        if(!tags.includes(tag) && tag.length){
+          setBlog({...blog, tags: [...tags, tag]});
+        }
+      } else {
+        return toast.error(`You can only add ${tagLimit} tags`)
+      }
+      e.target.value = '';
+    }
+  }
+
   return (
     <AnimationWrapper>
       <section className="w-screen min-h-screen grid items-center lg:grid-cols-2 py-16 lg:gap-4">
@@ -55,38 +74,59 @@ const PublishForm = () => {
             {title}
           </h1>
 
-          <p className="font-gelasio line-clamp-2 text-xl leading-7 mt-4">{des}</p>
+          <p className="font-gelasio line-clamp-2 text-xl leading-7 mt-4">
+            {des}
+          </p>
         </div>
 
         <div className="border-grey lg:border-1 lg:pl-8">
           <p className="text-dark-grey mb-1 mt-9">Blog Title</p>
-          <input type="text" placeholder="Blog Title" defaultValue={title} className="input-box pl-4" onChange={handleBlogTitleChange}/>
+          <input
+            type="text"
+            placeholder="Blog Title"
+            defaultValue={title}
+            className="input-box pl-4"
+            onChange={handleBlogTitleChange}
+          />
 
-          <p className="text-dark-grey mb-1 mt-9">Short description about your blog</p>
-          <textarea 
+          <p className="text-dark-grey mb-1 mt-9">
+            Short description about your blog
+          </p>
+          <textarea
             maxLength={characterLimit}
             defaultValue={des}
             className="h-40 resize-none input-box pl-4"
             onChange={handleBlogDesChange}
             onKeyDown={handleTitleKeyDown}
-          >
+          ></textarea>
 
-          </textarea>
+          <p className="mt-1 teext-dark-grey text-sm text-right">
+            {characterLimit - des.length} characters left
+          </p>
 
-          <p className="mt-1 teext-dark-grey text-sm text-right">{ characterLimit - des.length} characters left</p>
-
-          <p className="text-dark-grey mb-2 mt-9">Topics - ( Helps in searching and ranking your blog post )</p>
+          <p className="text-dark-grey mb-2 mt-9">
+            Topics - ( Helps in searching and ranking your blog post )
+          </p>
 
           <div className="relative input-box pl-2 py-2 pb-4">
-            <input type="text" placeholder="Topic" 
-              className="sticky input-box top-0 left-0 pl-4 mb-3 focus: bg-white"
+            <input
+              type="text"
+              placeholder="Topic"
+              className="sticky bg-white input-box top-0 left-0 pl-4 mb-3 focus:bg-white placeholder-dark-grey placeholder-opacity-50"
+              onKeyDown={handleTagKeydDown}
             />
 
-            <Tag tag={"testing tag"} />
+            {tags.map((tag, i) => {
+              return <Tag key={i} tagIndex={i} tag={tag} />;
+            })}
           </div>
+          <p className="mt-1 mb-4 text-dark-grey text-right">
+            {tagLimit - tags.length} tags left
+          </p>
+
+            
 
         </div>
-
       </section>
     </AnimationWrapper>
   );
