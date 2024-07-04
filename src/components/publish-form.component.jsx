@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import AnimationWrapper from "../common/page-animation";
 import { Toaster } from "react-hot-toast";
 import { EditorContext } from "../pages/editor.pages";
+import Tag from "./tags.component";
 
 const PublishForm = () => {
   const characterLimit = 200;
@@ -80,6 +81,8 @@ const PublishForm = () => {
             <input type="text" placeholder="Topic" 
               className="sticky input-box top-0 left-0 pl-4 mb-3 focus: bg-white"
             />
+
+            <Tag tag={"testing tag"} />
           </div>
 
         </div>
