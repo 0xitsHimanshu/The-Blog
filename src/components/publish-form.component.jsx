@@ -3,17 +3,24 @@ import AnimationWrapper from "../common/page-animation";
 import toast, { Toaster } from "react-hot-toast";
 import { EditorContext } from "../pages/editor.pages";
 import Tag from "./tags.component";
+import { UserContext } from "../App";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const PublishForm = () => {
   const characterLimit = 200;
   const tagLimit = 10;
 
+  let navigate = useNavigate()
+
   let {
     blog,
-    blog: { banner, title, tags, des },
+    blog: { banner, title, tags, des, content },
     setEditorState,
     setBlog
   } = useContext(EditorContext);
+
+  let { userAuth: {accessToken}} = useContext(UserContext);
 
   const handleCloseEvent = () => {
     setEditorState("editor");
@@ -49,6 +56,41 @@ const PublishForm = () => {
       }
       e.target.value = '';
     }
+  }
+
+  const publishBlog = async (e) => {
+    if(e.target.className.includes('disable'))
+      return;
+    if(!title.length)
+      return toast.error("Title is required");
+    if(!des.length)
+      return toast.error("Write a short description");
+    if(!tags.length)
+      return toast.error("Add atleast one tag");
+
+    let loadingToast = toast.loading("Publishing...");
+    e.target.classList.add('disable');
+
+    let blogObj = {
+      title, banner, des, content, tags, draft: false
+    }
+
+    axios.post(import.meta.env.VITE_SERVER_URL+"/blog/create-blog",blogObj, {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    }).then(()=> {
+      e.target.classList.remove('disable');
+      toast.dismiss(loadingToast);
+      toast.success("Published 👍");
+      navigate("/");
+    })
+    .catch(({response}) => {
+      e.target.classList.remove('disable');
+      toast.dismiss(loadingToast);
+      toast.error(response.data.error);
+    })
+    
   }
 
   return (
@@ -124,7 +166,11 @@ const PublishForm = () => {
             {tagLimit - tags.length} tags left
           </p>
 
-            
+          <button className="btn-dark px-8l"
+                  onClick={publishBlog}
+          >
+            Publish
+          </button>
 
         </div>
       </section>
