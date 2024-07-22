@@ -82,7 +82,7 @@ const PublishForm = () => {
     }).then(()=> {
       e.target.classList.remove('disable');
       toast.dismiss(loadingToast);
-      toast.success("Published 👍");
+      toast.success("Published👍");
 
       setTimeout(() => {
         navigate("/");
