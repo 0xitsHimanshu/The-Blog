@@ -3,6 +3,7 @@ import AnimationWrapper from "../common/page-animation";
 import InPageNavigation from "../components/inpage-navigation.component";
 import axios from "axios";
 import Loader from "../components/loader.component";
+import BlogPostCard from "../components/blog-post.component";
 
 const HomePage = () => {
   let [blogs, setBlog] = useState(null);
@@ -12,7 +13,6 @@ const HomePage = () => {
       .get(`${import.meta.env.VITE_SERVER_URL}/blog/latest-blogs`)
       .then(({ data }) => {
         setBlog(data.blogs);
-        console.log(data.blogs);
       })
       .catch((err) => console.log(err));
   };
@@ -35,7 +35,14 @@ const HomePage = () => {
                 <Loader />
               ) : (
                 blogs.map((blog, i) => {
-                  return <h1 key={i}>{blog.title}</h1>;
+                  return (
+                    <AnimationWrapper
+                      transition={{ duration: 1, delay: i * 0.1 }}
+                      key={i}
+                    >
+                      <BlogPostCard content={blog} author={blog.author.personal_info} />
+                    </AnimationWrapper>
+                  );
                 })
               )}
             </>
