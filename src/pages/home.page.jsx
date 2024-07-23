@@ -22,6 +22,15 @@ const HomePage = () => {
       .catch((err) => console.log(err));
   };
 
+  const fetchBlogbyCategory = () => {
+    axios
+      .post(`${import.meta.env.VITE_SERVER_URL}/blog/search-blogs`, {tag: pageState})
+      .then(({ data }) => {
+        setBlog(data.blogs);
+      })
+      .catch((err) => console.log(err));
+  }
+
   const fetchTrendingBlogs = () => {
     axios
       .get(`${import.meta.env.VITE_SERVER_URL}/blog/trending-blogs`)
@@ -50,6 +59,9 @@ const HomePage = () => {
 
     if(pageState == "home")
         fetchLatestBlogs();
+    else
+        fetchBlogbyCategory();
+
     if(!trendingBlogs)
         fetchTrendingBlogs();
 
