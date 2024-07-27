@@ -20,7 +20,7 @@ const UserNavigationPanel = () => {
                     <p>Write</p>
                 </Link>
 
-                <Link to={`/users/${username}`} className='link pl-8 py-4 ' > 
+                <Link to={`/user/${username}`} className='link pl-8 py-4 ' > 
                     Profile
                 </Link>
 
