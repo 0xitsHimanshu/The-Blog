@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
+import AnimationWrapper from '../common/page-animation';
+import Loader from '../components/loader.component';
 
 export const blogStructure = {
     title: "",
@@ -13,8 +15,10 @@ export const blogStructure = {
 }
 
 const BlogPage = () => {
+
     let {blog_id} = useParams();
     const [blog, setBlog] = useState(blogStructure);
+    const [loading, setLoading] = useState(true);
     let {title, content, banner, author: {personal_info: {fullname, username, profile_img}}, publishedAt} = blog;
 
     const fetchBlog = () => {
@@ -31,8 +35,21 @@ const BlogPage = () => {
     useEffect(()=> {
         fetchBlog();
     }, [])
+
   return (
-    <div>BlogPage from components - {blog.title}</div>
+    <AnimationWrapper>
+        {
+            loading ? <Loader /> 
+            :
+            <div className='max-w-[900px] center py-10 max-lg:px-[5vw]'>
+                <img src={banner} className='aspesct-video'/>
+
+                <div className='mt-12'>
+                    <h1></h1>
+                </div>
+            </div>  
+        }
+    </AnimationWrapper>
   )
 }
 
