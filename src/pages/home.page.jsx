@@ -168,7 +168,7 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div>
+            <div className="">
               <h1 className="font-medium text-xl mb-8">
                 Trending <i className="fi fi-rr-arrow-trend-up"></i>
               </h1>
