@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const BlogInteraction = () => {
 
-    let { blog, blog: { _id, title ,blog_id, activity, activity: {total_likes, total_comments}, author: {personal_info: {username: author_username}}}, setBlog, islikedByUser, setIsLikedByUser} = useContext(BlogContext);
+    let { blog, blog: { _id, title ,blog_id, activity, activity: {total_likes, total_comments}, author: {personal_info: {username: author_username}}}, setBlog, islikedByUser, setIsLikedByUser, setCommentWrapper} = useContext(BlogContext);
 
     let userContext = useContext(UserContext);
     let accessToken = userContext?.userAuth?.accessToken;
@@ -68,7 +68,7 @@ const BlogInteraction = () => {
           </button>
           <p className="text-xl text-dark-grey">{total_likes}</p>
 
-          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-grey/80">
+          <button onClick={() => setCommentWrapper( preValue => !preValue) } className="w-10 h-10 rounded-full flex items-center justify-center bg-grey/80">
             <i className="fi fi-rr-comment-dots text-xl hover:text-yellow"></i>
           </button>
           <p className="text-xl text-dark-grey">{total_comments}</p>
