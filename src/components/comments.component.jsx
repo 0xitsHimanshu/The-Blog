@@ -2,6 +2,14 @@ import React, { useContext } from 'react'
 import { BlogContext } from '../pages/blog.page'
 import CommentField from './comment-field.component';
 
+export const fetchComments = async ({skip =0, blog_id, setParentCommentCount, comment_array = null}) => {
+    let res;
+
+    await axios.post(`${import.meta.env.VITE_SERVER_URL}/blog/get-comments`, {blog_id, skip})
+
+    return res;
+}
+
 const CommentsContainer = () => {
     let {blog: {title}, commentsWrapper, setCommentWrapper} = useContext(BlogContext);
     
