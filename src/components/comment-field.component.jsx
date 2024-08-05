@@ -6,7 +6,15 @@ import axios from 'axios';
 
 const CommentField = ({action}) => {
     let {blog ,blog: {_id, author: {_id: blog_author}, comments, activity, activity: {total_comments, total_parent_comments} },setBlog, totalParentCommentsLoaded, setTotalParentCommentsLoaded} = useContext(BlogContext)
-    let {userAuth: {accessToken, user: { username, fullname, profile_img}}} = useContext(UserContext)
+    // let {userAuth: {accessToken, user: { username, fullname, profile_img}}} = useContext(UserContext)
+    const { userAuth } = useContext(UserContext);
+
+    // Ensure userAuth and user are defined before destructuring
+    const accessToken = userAuth?.accessToken;
+    const username = userAuth?.user?.username ?? '';
+    const fullname = userAuth?.user?.fullname ?? '';
+    const profile_img = userAuth?.user?.profile_img ?? '';
+    
     const [comment, setComment] = useState("");
     const handleComment =  () => {
         if(!accessToken){

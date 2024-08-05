@@ -1,17 +1,33 @@
 import React, { useContext } from 'react'
 import { BlogContext } from '../pages/blog.page'
 import CommentField from './comment-field.component';
+import axios from 'axios';
+import NoDataMessage from './nodata.component';
 
-export const fetchComments = async ({skip =0, blog_id, setParentCommentCount, comment_array = null}) => {
+export const fetchComments = async ({skip=0, blog_id, setParentCommentCountFnc, comment_array = null}) => {
     let res;
 
-    await axios.post(`${import.meta.env.VITE_SERVER_URL}/blog/get-comments`, {blog_id, skip})
+    await axios.post(`${import.meta.env.VITE_SERVER_URL}/blog/get-comment`, {blog_id, skip})
+          .then(({data}) => {
+             data.map(comment => {
+                    comment.childrenLevel = 0;
+             })
+
+             setParentCommentCountFnc(preVal => preVal + data.length);
+
+             if(comment_array == null){
+                res = {results: data}
+             } else {
+                res = {results: [...comment_array, ...data]}
+             }
+          })
+              
 
     return res;
 }
 
 const CommentsContainer = () => {
-    let {blog: {title}, commentsWrapper, setCommentWrapper} = useContext(BlogContext);
+    let {blog: {title, comments: {results: commentsArr}}, commentsWrapper, setCommentWrapper} = useContext(BlogContext);
     
   return (
     <div className={'max-sm:w-full fixed '+ ( commentsWrapper ? "top-0 sm:right-0 " : "top-[100%] sm:right-[-100%] placeholder:" ) +' duration-700 max-sm:right-0 sm:top-0 w-[30%] min-w-[350px] h-full z-50 bg-white shadow-2xl p-8 px-16 overflow-y-auto overflow-x-hidden'}> 
@@ -27,6 +43,14 @@ const CommentsContainer = () => {
         <hr className='border-grey my-8 w-[120%] -ml-10' />
 
         <CommentField action={"Comment"}/>
+
+        {
+            commentsArr && commentsArr.length ? 
+                commentsArr.map((comment, i) => {
+                    return comment.comment;
+                })
+            : <NoDataMessage message="No comments found" />
+        }
 
     </div>
   )
