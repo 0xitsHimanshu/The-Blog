@@ -5,7 +5,7 @@ import { BlogContext } from '../pages/blog.page';
 import axios from 'axios';
 
 const CommentField = ({action}) => {
-    let {blog ,blog: {_id, author: {_id: blog_author}, comments, activity, activity: {total_comments, total_parent_comments} },setBlog, totalParentCommentsLoaded, setTotalParentCommentsLoaded} = useContext(BlogContext)
+    let {blog ,blog: {_id, author: {_id: blog_author}, comments, comments: {results: commentsArr }, activity, activity: {total_comments, total_parent_comments} },setBlog, totalParentCommentsLoaded, setTotalParentCommentsLoaded} = useContext(BlogContext)
     // let {userAuth: {accessToken, user: { username, fullname, profile_img}}} = useContext(UserContext)
     const { userAuth } = useContext(UserContext);
 
@@ -32,7 +32,7 @@ const CommentField = ({action}) => {
             data.commented_by = { personal_info: {username, fullname, profile_img}}
             let newCommentArr;
             data.childrenLevel = 0;
-            newCommentArr = [data];
+            newCommentArr = [data, ...commentsArr];
             let parentCommentIncVal = 1;
 
             setBlog({...blog, comments: {...comments, results: newCommentArr}, activity: {...activity, total_comments: total_comments + 1, total_parent_comments: total_parent_comments + parentCommentIncVal}})
