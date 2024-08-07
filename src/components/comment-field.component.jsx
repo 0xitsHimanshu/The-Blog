@@ -54,14 +54,21 @@ const CommentField = ({ action, index=undefined, replyingTo=undefined, setReplyi
         let newCommentArr;
 
         if(replyingTo){
-            commentsArr[index].children.push(data._id);
-            data.childrenLevel = commentsArr[index].childrenLevel + 1;
+            const parentComment = commentsArr[index];
+            if (!parentComment.children) {
+                parentComment.children = [];
+            }
+            parentComment.children.push(data);
+            data.childrenLevel = parentComment.childrenLevel + 1;
+            parentComment.isReplyLoaded = true;
 
-            commentsArr[index].isReplyLoaded = true;
-            commentsArr.splice(index + 1, 0, data);
-            newCommentArr = commentsArr
+            newCommentArr = [
+                ...commentsArr.slice(0, index + 1),
+                data,
+                ...commentsArr.slice(index + 1),
+            ];
 
-            setReplying(false)
+            setReplying(false);
 
         } else {
             data.childrenLevel = 0;
@@ -96,7 +103,10 @@ const CommentField = ({ action, index=undefined, replyingTo=undefined, setReplyi
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         placeholder="Leave a comment..."
-        className="input-box pl-5 placeholder:text-dark-grey resize-none h-[150px] overflow-auto"
+        className={
+          "input-box pl-5 placeholder:text-dark-grey resize-none h-[150px] overflow-auto " +
+          (action === "reply" ? " mt-2" : "")
+        }
       ></textarea>
       <button onClick={handleComment} className="btn-dark mt-5 px-10">
         {action}
