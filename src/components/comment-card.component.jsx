@@ -4,6 +4,7 @@ import { UserContext } from "../App";
 import CommentField from "./comment-field.component";
 import { BlogContext } from "../pages/blog.page";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const CommentCard = ({ index, leftVal, commentData }) => {
   let {
@@ -34,18 +35,20 @@ const CommentCard = ({ index, leftVal, commentData }) => {
   const [isReplying, setIsReplying] = useState(false);
 
   const getParentIndex = () => {
-    let startingPoint = index - 1;
+    let StartingPoint = index-1;
+
     try {
-        while (commentsArr[startingPoint].childrenLevel > commentData.childrenLevel) {
-            startingPoint--;
+        while(commentsArr[StartingPoint].childrenLevel >= commentData.childrenLevel){
+            StartingPoint--;
         }
     } catch {
-        startingPoint = undefined;
+        StartingPoint = undefined;
     }
-    return startingPoint;
+    return StartingPoint;
   }
 
   const removeCommentsCard = (startingPoint, isDelete = false) => {
+    
     if (commentsArr[startingPoint]) {
       while (
         commentsArr[startingPoint].childrenLevel > commentData.childrenLevel
@@ -59,45 +62,40 @@ const CommentCard = ({ index, leftVal, commentData }) => {
 
     if(isDelete){
         let parentIndex = getParentIndex();
+
         if(parentIndex != undefined){
-            commentsArr[parentIndex].children = commentsArr[parentIndex].children.filter(child => child._id != _id);
-            
+            commentsArr[parentIndex].children = commentsArr[parentIndex].children.filter(child => child != _id)
+
             if(!commentsArr[parentIndex].children.length){
                 commentsArr[parentIndex].isReplyLoaded = false;
             }
         }
 
-        commentsArr.splice(index, 1);
+        commentsArr.splice(index,1)
     }
 
     if(commentData.childrenLevel == 0 && isDelete){
-        setTotalParentCommentsLoaded(preValue => preValue - 1);
+        setTotalParentCommentsLoaded( preVal => preVal -1);
     }
 
-    setBlog({
-      ...blog,
-      comments: { results: commentsArr },
-      activity: {
-        ...activity,
-        total_parent_comments:
-          total_parent_comments -
-          (commentData.childrenLevel == 0 && isDelete ? 1 : 0),
-      },
-    });
+    setBlog({...blog,comments: { results: commentsArr }, activity: {...activity, total_parent_comments: total_parent_comments- (commentData.childrenLevel == 0 && isDelete ? 1 : 0)}});
   };
 
   const deleteCommentandReplies = (e) => {
-    e.target.setAttribute("disabled", true);
-
-    axios
-     .post(`${import.meta.env.VITE_SERVER_URL}/blog/delete-comment`, {_id}, {headers: {Authorization: `Bearer ${accessToken}`}})
-     .then(({data}) => {
-        e.target.removeAttribute("disabled");
-        removeCommentsCard(index+1, true); 
-     })
-     .catch(err => {
-        console.log(err.mesaage);
-     })
+    e.target.setAttribute('disabled', true);
+    
+    axios.post(`${import.meta.env.VITE_SERVER_URL}/blog/delete-comment`, {_id}, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    })
+    .then(() => {
+        e.target.removeAttribute('disable');
+        removeCommentsCard(index+1, true);
+    })
+    .catch(err => {
+        console.log(err.message);
+    })
   }
 
   // console.log(commentData);
@@ -108,6 +106,24 @@ const CommentCard = ({ index, leftVal, commentData }) => {
 
     setIsReplying((preValue) => !preValue);
   };
+
+  const deleteComments = (e) => {
+    e.target.setAttribute('disabled', true);
+    
+    axios.post(`${import.meta.env.VITE_SERVER_URL}/blog/delete-comment`, {_id}, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    })
+    .then(() => {
+        e.target.removeAttribute('disable');
+        removeCommentsCard(index+1, true);
+    })
+    .catch(err => {
+        console.log(err.message);
+    })
+
+  }
 
   const handleHideReply = () => {
     commentData.isReplyLoaded = false;
@@ -134,6 +150,8 @@ const CommentCard = ({ index, leftVal, commentData }) => {
 
     }
   }
+
+  
 
   return (
     <div className="w-full" style={{ paddingLeft: `${leftVal * 10}px` }}>
@@ -175,22 +193,23 @@ const CommentCard = ({ index, leftVal, commentData }) => {
 
           {
             username == commented_by_username || username == blog_author ? 
-                <button className="p-2 px-3 rounded-full ml-auto hover:bg-red/30 hover:text-red flex items-center "
-                    onClick={deleteCommentandReplies}
+                <button  className="p-2 px-3 rounded-full border border-grey ml-auto hover:bg-red/30 hover:text-red flex items-center "    
+                        onClick={deleteCommentandReplies}
                 >
                     <i className="fi fi-rr-trash pointer-events-none"></i>
-                </button>
-            : ""
+                </button> : ""
           }
         </div>
 
         {isReplying ? (
-          <CommentField
-            action="reply"
-            index={index}
-            replyingTo={_id}
-            setReplying={setIsReplying}
-          />
+            <div className="mt-8">
+                <CommentField
+                action="reply"
+                index={index}
+                replyingTo={_id}
+                setReplying={setIsReplying}
+              />
+            </div>
         ) : (
           ""
         )}
