@@ -107,23 +107,6 @@ const CommentCard = ({ index, leftVal, commentData }) => {
     setIsReplying((preValue) => !preValue);
   };
 
-  const deleteComments = (e) => {
-    e.target.setAttribute('disabled', true);
-    
-    axios.post(`${import.meta.env.VITE_SERVER_URL}/blog/delete-comment`, {_id}, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    })
-    .then(() => {
-        e.target.removeAttribute('disable');
-        removeCommentsCard(index+1, true);
-    })
-    .catch(err => {
-        console.log(err.message);
-    })
-
-  }
 
   const handleHideReply = () => {
     commentData.isReplyLoaded = false;
@@ -131,18 +114,18 @@ const CommentCard = ({ index, leftVal, commentData }) => {
     removeCommentsCard(index + 1);
   };
 
-  const loadReplies = ({skip = 0}) => {
-    if(children.length){
+  const loadReplies = ({skip = 0, currentIndex = index}) => {
+    if(commentsArr[currentIndex].children.length){
         handleHideReply();
 
         axios
-         .post(`${import.meta.env.VITE_SERVER_URL}/blog/get-replies`, {_id, skip})
+         .post(`${import.meta.env.VITE_SERVER_URL}/blog/get-replies`, { _id: commentsArr[currentIndex]._id, skip})
          .then(({data: {replies}}) => {
-            commentData.isReplyLoaded = true;
+            commentsArr[currentIndex].isReplyLoaded = true; 
             
             for(let i = 0; i < replies.length; i++){
-                replies[i].childrenLevel = commentData.childrenLevel + 1;
-                commentsArr.splice(index + 1 + i + skip, 0, replies[i]);
+                replies[i].childrenLevel = commentsArr[currentIndex].childrenLevel + 1;
+                commentsArr.splice(currentIndex + 1 + i + skip, 0, replies[i]);
             }
 
             setBlog({...blog, comments: {...comments, results: commentsArr}});
@@ -151,7 +134,30 @@ const CommentCard = ({ index, leftVal, commentData }) => {
     }
   }
 
-  
+const LoadMoreReplies = () => {
+  let parentIndex = getParentIndex();
+
+  const button = <button className="p-2 px-3 rounded-full hover:bg-grey/70 flex items-center justify-center gap-2" onClick={() =>loadReplies({skip: index - parentIndex,currentIndex: parentIndex,})}>
+    <span className="underline">Load more replies</span>
+    <i className="fi fi-br-rotate-right text-sm flex"></i>
+  </button>
+
+  if (commentsArr[index + 1]) {
+    if(commentsArr[index + 1].childrenLevel < commentsArr[index].childrenLevel){
+      if (index - parentIndex < commentsArr[parentIndex].children.length) {
+        return button;
+      }
+    }
+  } else {
+      if(parentIndex){
+        if (index - parentIndex < commentsArr[parentIndex].children.length) {
+          return button;
+        }
+      }
+   }
+
+  return null;
+};
 
   return (
     <div className="w-full" style={{ paddingLeft: `${leftVal * 10}px` }}>
@@ -214,6 +220,8 @@ const CommentCard = ({ index, leftVal, commentData }) => {
           ""
         )}
       </div>
+
+      <LoadMoreReplies />
     </div>
   );
 };
