@@ -32,7 +32,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="navbar">
+      <nav className="navbar z-50">
         <Link to={"/"} className="flex-none w-12">
           <img src={logo} alt="" className="w-full" />
         </Link>
