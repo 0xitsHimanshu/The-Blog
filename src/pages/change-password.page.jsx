@@ -1,11 +1,16 @@
-import React, { useRef } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import AnimationWrapper from '../common/page-animation'
 import InputBox from '../components/input.component'
 import toast, { Toaster } from 'react-hot-toast';
+import { UserContext } from '../App';
+import axios from 'axios';
 
 const ChangePassword = () => {
+    let { userAuth: {accessToken} } = useContext(UserContext);
+    
     const changePasswordForm = useRef();
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+
 
     const handleSubmit = (e) => {
 
@@ -27,8 +32,29 @@ const ChangePassword = () => {
             return toast.error("Password should be atleast 6 characters long and should contain atleast 1 uppercase letter, 1 lowercase letter and 1 number");
         }
 
-        
+        e.target.setAttribute('disabled', true);
+
+        let loadingToast = toast.loading("Updating...");
+
+        axios
+         .post(`${import.meta.env.VITE_SERVER_URL}/users/change-password`, formData, {
+            headers:{
+                'Authorization': `Bearer ${accessToken}`,
+            }
+         })
+         .then(() => {
+            toast.dismiss(loadingToast);
+            e.target.removeAttribute('disabled');
+            return toast.success("Password changed successfully");
+         })
+         .catch(({response}) => {
+            toast.dismiss(loadingToast);
+            e.target.removeAttribute('disabled');
+            return toast.error(response.data.error);
+         })
+
     }
+
 
   return (
     <AnimationWrapper>
