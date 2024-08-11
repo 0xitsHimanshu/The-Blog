@@ -5,7 +5,7 @@ import axios from 'axios';
 import NoDataMessage from './nodata.component';
 import AnimationWrapper from '../common/page-animation';
 import CommentCard from './comment-card.component';
-import LoadMoreDataBtn from './load-more.component';
+
 
 export const fetchComments = async ({skip=0, blog_id, setParentCommentCountFnc, comment_array = null}) => {
     let res;
