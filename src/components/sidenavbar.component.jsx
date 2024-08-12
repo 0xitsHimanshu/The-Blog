@@ -22,15 +22,16 @@ const SideNav = () => {
 
         if(e.target == sideBarIconTab.current){
             setShowSideNav(true);
-        }
-        else{
+        }else{
             setShowSideNav(false);
         }
     }
 
     useEffect(() => {
         setShowSideNav(false);
-        pageStateTab.current.click();
+        if(pageStateTab.current){
+            pageStateTab.current.click();
+        }
     }, [pageState])
 
     return (

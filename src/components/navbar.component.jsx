@@ -11,7 +11,11 @@ const Navbar = () => {
   const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
   const [userNavPanel, setUserNavPanel] = useState(false);
 
-  const { userAuth, userAuth: { accessToken, user: { profile_img } = {} } = {} } = useContext(UserContext); // destructuring the userAuth object to get accessToken and user object from it 
+  // const { userAuth, userAuth: { accessToken, user: { profile_img } = {} } = {} } = useContext(UserContext); // destructuring the userAuth object to get accessToken and user object from it 
+  const {userAuth} = useContext(UserContext);
+  const accessToken = userAuth?.accessToken;
+  const profile_img = userAuth?.user?.profile_img;
+
 
   const handleUserNavPanel = () => {
     setUserNavPanel((currentVal) => !currentVal);
