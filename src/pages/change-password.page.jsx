@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import AnimationWrapper from '../common/page-animation'
 import InputBox from '../components/input.component'
 import toast, { Toaster } from 'react-hot-toast';
@@ -7,10 +7,21 @@ import axios from 'axios';
 
 const ChangePassword = () => {
     let { userAuth: {accessToken} } = useContext(UserContext);
+
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
     
     const changePasswordForm = useRef();
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
 
+    const handleNewPasswordChange = (e) => {
+        setNewPassword(e.target.value);
+      };
+    
+    const handleConfirmPasswordChange = (e) => {
+        setConfirmPassword(e.target.value);
+    };
 
     const handleSubmit = (e) => {
 
@@ -22,12 +33,16 @@ const ChangePassword = () => {
             formData[key] = value;
         }
 
-        let {currentPassword, newPassword} = formData;
+        let {currentPassword, newPassword, confirmPassword} = formData;
+
+        if(newPassword !== confirmPassword){
+            return toast.error("Passwords do not match");
+        }
 
         if(!currentPassword.length || !newPassword.length){
             return toast.error("Please fill the current and new password");
         }
-
+        
         if(!passwordRegex.test(currentPassword) || !passwordRegex.test(newPassword)){
             return toast.error("Password should be atleast 6 characters long and should contain atleast 1 uppercase letter, 1 lowercase letter and 1 number");
         }
@@ -64,9 +79,12 @@ const ChangePassword = () => {
                 Change Password
             </h1>
             <div className='py-10 w-full md:max-w-[400px]'>
-                <InputBox name={"currentPassword"} type={"password"} placeholder={"Current password"} className="profile-edit-input" icon={"fi-rr-unlock"} />
+                <InputBox name={"currentPassword"} type={"password"} placeholder={"Current password"} className="profile-edit-input" icon={"fi-rr-unlock"}/>
 
                 <InputBox name={"newPassword"} type={"password"} placeholder={"New password"} className="profile-edit-input" icon={"fi-rr-unlock"} />
+
+                <InputBox name={"confirmPassword"} type={"password"} placeholder={"Confirm password"} className="profile-edit-input" icon={"fi-rr-unlock"} />
+
 
                 <button onClick={handleSubmit} className='btn-dark px-10' type='submit'>Change Password</button>
             </div>
