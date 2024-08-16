@@ -8,20 +8,8 @@ import axios from 'axios';
 const ChangePassword = () => {
     let { userAuth: {accessToken} } = useContext(UserContext);
 
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-
-    
     const changePasswordForm = useRef();
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
-
-    const handleNewPasswordChange = (e) => {
-        setNewPassword(e.target.value);
-      };
-    
-    const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value);
-    };
 
     const handleSubmit = (e) => {
 
