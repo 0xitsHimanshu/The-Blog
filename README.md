@@ -82,7 +82,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For any questions or feedback, feel free to reach out:
 
-- Twitter: Himanshu()
+- Twitter: [Himanshu](https://www.x.com/0xhimansh)
 - LinkedIn: [Himanshu Yadav](https://www.linkedin.com/in/0xhimanshuyadav/)
 
 ---
