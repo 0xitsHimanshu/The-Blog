@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Toaster } from 'react-hot-toast';
 
-const NotificationCommentField = () => {
+const NotificationCommentField = ({_id, blog_author, index=undefined, replyingTo = undefined, setIsReplying, notification_id, notificationData}) => {
     const [comment, setComment] = useState("");
     
     const handleComment = () => {

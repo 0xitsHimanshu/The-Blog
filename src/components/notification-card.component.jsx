@@ -10,10 +10,11 @@ const NotificationCard = ({data, index, notificationState }) => {
       createdAt,
       comment,
       replied_on_comment,
+      user,
       user: {
         personal_info: { profile_img, fullname, username: profile_username },
       },
-      blog: { blog_id, title, banner },
+      blog: { _id, blog_id, title, banner },
     } = data;
 
 
@@ -73,7 +74,7 @@ const NotificationCard = ({data, index, notificationState }) => {
         {
             isReplying ? 
              <div className='mt-8'>
-                <NotificationCommentField />
+                <NotificationCommentField _id={_id} blog_author={user} index={index} replyingTo={comment._id} setIsReplying={setIsReplying} notification_id={notification_id} notificationData={} />
              </div>
             : ""
         }
