@@ -11,8 +11,9 @@ import NotificationCard from '../components/notification-card.component'
 const Notifications = () => {
     const [filter, setFilter] = useState('all')
     const [notifications, setNotifications] = useState(null)
-    const {userAuth} = useContext(UserContext);
+    const {userAuth, setUserAuth} = useContext(UserContext);
     const accessToken = userAuth?.accessToken;
+    const new_notification_available = userAuth?.new_notification_available;
 
     let filters = ['all', 'like', 'comment', 'reply']
 
@@ -25,6 +26,10 @@ const Notifications = () => {
             }
         })
         .then( async ({data: { notifications: data}})=> {
+
+            if(new_notification_available){
+                setUserAuth({...userAuth, new_notification_available: false});
+            }
             
             let formatedData = await filterPaginationData({
                 state: notifications,
