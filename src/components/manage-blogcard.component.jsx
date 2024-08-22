@@ -4,9 +4,21 @@ import { getDay } from '../common/date';
 
 const BlogStats = ({stats}) => {
 
+  return (
+    <div className="flex gap-2 max-lg:mb-6 max-lg:pb-6 max-lg:border-grey max-lg:border-b">
+      {
+      Object.keys(stats).map((key, i) => {
+        return !key.includes("parent") ? 
+          <div key={i} className={"flex flex-col items-center w-full h-full justify-center p-4 px-6 "+ (i != 0 ? " border-grey border-l" : "") }>
+            <h1 className='text-xl lg:text-2xl mb-2'>{stats[key].toLocaleString()}</h1>
+            <p className='max-lg:text-dark-grey capitalize'>{key.split("_")[1]}</p>
+          </div> : ""
+      })}
+    </div>
+  );
 }
 
-const ManagePublishedBlogCard = ({blog}) => {
+export const ManagePublishedBlogCard = ({blog}) => {
   
   const [showStats, setShowStats] = useState(false)
 
@@ -39,8 +51,33 @@ const ManagePublishedBlogCard = ({blog}) => {
                <BlogStats stats={activity}/>
             </div>
         </div>
+
+        {
+          showStats ? <div className='lg:hidden'><BlogStats stats={activity}/></div> : ""
+        }
       </>
   )
 }
 
-export default ManagePublishedBlogCard
+export const ManageDraftBlogCard = ({Draft, index}) => {
+
+  let {title, des, blog_id} = Draft;
+  
+  return (
+    <div className='flex gap-5 lg:gap-10 pb-6 border-b mb-6 border-grey'>
+       <h1 className='blog-index text-center pl-4 md:pl-6 flex-none'>{index < 10 ? '0'+index : index }</h1>
+
+       <div>
+        <h1 className='blog-title mb-3'>{title}</h1>
+
+        <p className='line-clamp-2 '>{des.length ? des : 'No description'}</p>
+
+        <div className='flex gap-6 mt-3'>
+          <Link to={`/editor/${blog_id}`} className="px-4 py-2 underline hover:bg-black/20 rounded-full">Edit</Link>
+          <button className="px-4 py-2 text-red hover:bg-red/20 rounded-full">Delete</button>
+        </div>
+
+       </div>
+    </div>
+  )
+}
