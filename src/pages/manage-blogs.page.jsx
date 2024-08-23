@@ -111,7 +111,7 @@ const ManageBlogs = () => {
                              
                             return <AnimationWrapper key={i} transition={{delay: i* 0.04}}>
 
-                                <ManagePublishedBlogCard blog={blog} />
+                                <ManagePublishedBlogCard blog={{...blog, index: i,  setStateFunc: setBlogs}} />
 
                             </AnimationWrapper>
                         })
@@ -130,7 +130,7 @@ const ManageBlogs = () => {
                             
                             return <AnimationWrapper key={i} transition={{delay: i* 0.04}}>
 
-                                <ManageDraftBlogCard Draft={blog} index={i+1} />
+                                <ManageDraftBlogCard Draft={{...blog, index: i, setStateFunc: setDrafts}}  />
 
                             </AnimationWrapper>
                         })

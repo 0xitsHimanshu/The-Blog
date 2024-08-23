@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom';
 import { getDay } from '../common/date';
+import { UserContext } from '../App';
+import axios from 'axios';
 
 const BlogStats = ({stats}) => {
 
@@ -23,6 +25,8 @@ export const ManagePublishedBlogCard = ({blog}) => {
   const [showStats, setShowStats] = useState(false)
 
   let {banner , blog_id, title, publishedAt, activity} = blog;
+  let {userAuth} = useContext(UserContext);
+  const accessToken = userAuth?.accessToken;
   
   return (
       <>
@@ -43,7 +47,12 @@ export const ManagePublishedBlogCard = ({blog}) => {
                     className='lg:hidden px-4 py-2 underline text-twitter hover:bg-twitter/30 rounded-full flex items-center' onClick={()=> setShowStats(preVal => !preVal)}
                     >Stats
                   </button>
-                  <button className='px-4 py-2 underline text-red hover:bg-red/30 rounded-full flex items-center'>Delete</button>
+                  <button 
+                      className="px-4 py-2 text-red hover:bg-red/20 rounded-full" 
+                      onClick={(e) => deleteBlog(blog, accessToken,e.target)}
+                  >
+                    Delete
+                  </button>
               </div>
             </div>
 
@@ -59,9 +68,13 @@ export const ManagePublishedBlogCard = ({blog}) => {
   )
 }
 
-export const ManageDraftBlogCard = ({Draft, index}) => {
+export const ManageDraftBlogCard = ({Draft}) => {
 
-  let {title, des, blog_id} = Draft;
+  let {title, des, blog_id, index} = Draft;
+  let {userAuth} = useContext(UserContext);
+  const accessToken = userAuth?.accessToken;
+
+  index++;
   
   return (
     <div className='flex gap-5 lg:gap-10 pb-6 border-b mb-6 border-grey'>
@@ -74,10 +87,46 @@ export const ManageDraftBlogCard = ({Draft, index}) => {
 
         <div className='flex gap-6 mt-3'>
           <Link to={`/editor/${blog_id}`} className="px-4 py-2 underline hover:bg-black/20 rounded-full">Edit</Link>
-          <button className="px-4 py-2 text-red hover:bg-red/20 rounded-full">Delete</button>
+          <button 
+              className="px-4 py-2 text-red hover:bg-red/20 rounded-full" 
+              onClick={(e) => deleteBlog(Draft, accessToken,e.target)}
+          >
+            Delete
+          </button>
         </div>
 
        </div>
     </div>
   )
+}
+
+const deleteBlog = (blog, accessToken, target) => {
+  let {index, blog_id, setStateFunc} = blog;
+
+  target.setAttribute('disabled', 'true');
+
+  axios
+   .post(`${import.meta.env.VITE_SERVER_URL}/blog/delete-blog`, { blog_id}, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+   } )
+   .then(({data}) => {
+      target.removeAttribute('disabled');
+
+      setStateFunc(preVal => {
+
+        let {deletedDocCount, totalDocs, results} = preVal
+        results.splice(index, 1);
+
+        if(!deletedDocCount) deletedDocCount = 0;
+
+        if(!results.length && totalDocs-1 > 0){
+          return null;
+        }
+
+        return {...preVal, deletedDocCount: deletedDocCount+1, totalDocs: totalDocs-1}
+
+      });
+   })
 }
