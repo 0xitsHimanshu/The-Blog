@@ -8,6 +8,7 @@ import Loader from '../components/loader.component';
 import NoDataMessage from '../components/nodata.component';
 import AnimationWrapper from '../common/page-animation';
 import {ManageDraftBlogCard, ManagePublishedBlogCard} from '../components/manage-blogcard.component';
+import LoadMoreDataBtn from '../components/load-more.component';
 
 const ManageBlogs = () => {
 
@@ -18,10 +19,10 @@ const ManageBlogs = () => {
   const [drafts, setDrafts] = useState(null);
   const [query, setQuery] = useState("");
 
-  const getBlogs = ({page, draft, deleteDocCount = 0}) => {
+  const getBlogs = ({page, draft, deletedDocCount = 0}) => {
 
     axios
-     .post(`${import.meta.env.VITE_SERVER_URL}/blog/user-written-blogs`, {page, draft, query, deleteDocCount}, {
+     .post(`${import.meta.env.VITE_SERVER_URL}/blog/user-written-blogs`, {page, draft, query, deletedDocCount}, {
          headers: {
             'Authorization': `Bearer ${accessToken}`
          }
@@ -116,11 +117,12 @@ const ManageBlogs = () => {
                             </AnimationWrapper>
                         })
                     }
+                    <LoadMoreDataBtn state={blogs} fetchDataFucn={getBlogs} additonalParam={{draft: false, deletedDocCount: blogs.deletedDocCount }} />
                 </> 
                  : <NoDataMessage message={'No published blogs'} />
             }
 
-            { //published blogs
+            { //drafts blogs
 
                 drafts == null ? <Loader /> : 
                 drafts.results.length ? 
@@ -135,6 +137,8 @@ const ManageBlogs = () => {
                             </AnimationWrapper>
                         })
                     }
+
+
                 </> 
                 : <NoDataMessage message={'No Drafted blogs'}/>
             }
