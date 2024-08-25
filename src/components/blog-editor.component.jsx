@@ -127,7 +127,7 @@ const BlogEditor = () => {
           toast.success("Saved👍");
     
           setTimeout(() => {
-            navigate("/");
+            navigate("/dashboard/blogs?tab=drafts");
           }, 500);
         })
         .catch(({response}) => {

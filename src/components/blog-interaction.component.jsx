@@ -36,7 +36,7 @@ const BlogInteraction = () => {
             axios
              .post(`${import.meta.env.VITE_SERVER_URL}/blog/like-blog/`, {_id, islikedByUser}, {headers: {Authorization: `Bearer ${accessToken}`}})
              .then(({data}) => {
-                 console.log(data);
+                //  console.log(data);
              }).catch(err => {
                   console.log(err.message);
              })
