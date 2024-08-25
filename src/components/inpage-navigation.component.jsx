@@ -3,16 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 export let  activeTabLineRef;
 export let activeTabRef;
 
-const InPageNavigation = ({
-  routes,
-  defaultHidden = [],
-  defaultActiveIndex = 0,
-  children,
-}) => {
+const InPageNavigation = ({ routes,defaultHidden = [],defaultActiveIndex = 0,children,}) => {
   activeTabLineRef = useRef();
   activeTabRef = useRef();
 
   let [inPageNavIndex, setInPageNavIndex] = useState(defaultActiveIndex);
+  let [width, setWidth] = useState(window.innerWidth);
+  let [isResizedEventAdded,  setIsResizedEventAdded] = useState(false);
 
   const changePageState = (btn, i) => {
     let { offsetWidth, offsetLeft } = btn;
@@ -23,8 +20,21 @@ const InPageNavigation = ({
   };
 
   useEffect(() => {
-    changePageState(activeTabRef.current, defaultActiveIndex);
-  }, []);
+    if(width > 766 && inPageNavIndex != defaultActiveIndex){
+      changePageState(activeTabRef.current, defaultActiveIndex);
+    }
+
+
+    if(!isResizedEventAdded){
+      window.addEventListener("resize", () => {
+        if(!isResizedEventAdded){
+          setWidth(window.innerWidth);
+        }
+
+        setWidth(window.innerWidth);
+      })
+    }
+  }, [width]);
 
   return (
     <>
