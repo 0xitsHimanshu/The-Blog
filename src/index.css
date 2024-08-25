@@ -15,7 +15,7 @@
     }
 
     body {
-        @apply font-inter font-normal text-black;
+        @apply font-inter font-normal text-black bg-white;
     }
 
     i {

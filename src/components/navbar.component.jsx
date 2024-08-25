@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { UserContext } from "../App";
+import { ThemeContext, UserContext } from "../App";
 import logo from "../imgs/logo.png";
 import UserNavigationPanel from "./user-navigation.component";
 import axios from "axios";
+import { StoreinSession } from "../common/session";
 
 const Navbar = () => {
+  const {theme, setTheme} = useContext(ThemeContext);
 
   let navigate = useNavigate();
 
@@ -48,7 +50,15 @@ const Navbar = () => {
     }
   }
 
+  const changeTheme = () => {
+    let newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
 
+    document.body.setAttribute("data-theme", newTheme);
+
+    StoreinSession("theme", newTheme);
+  }
+  
   return (
     <>
       <nav className="navbar z-50">
@@ -85,6 +95,10 @@ const Navbar = () => {
           <i className="fi fi-rr-file-edit"></i>
           <p>Write</p>
         </Link>
+
+        <button className="w-12 h-12 rounded-full bg-grey relative hover:bg-black/10" onClick={changeTheme}>
+                <i className={`fi fi-${theme=='light'? 'rr-moon-stars': 'sr-brightness'} text-xl`}></i>
+        </button>
 
         { accessToken ? (
             <>
