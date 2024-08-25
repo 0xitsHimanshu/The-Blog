@@ -138,6 +138,7 @@ const ManageBlogs = () => {
                         })
                     }
 
+                    <LoadMoreDataBtn state={drafts} fetchDataFucn={getBlogs} additonalParam={{draft: true, deletedDocCount: drafts.deletedDocCount }} />
 
                 </> 
                 : <NoDataMessage message={'No Drafted blogs'}/>
