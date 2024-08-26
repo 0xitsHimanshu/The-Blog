@@ -17,11 +17,12 @@ import ManageBlogs from './pages/manage-blogs.page';
 
 export const UserContext = createContext({});
 export const ThemeContext = createContext({});
+const darktThemePreference = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
 
 const App = () => {  
     
     const [userAuth, setUserAuth] = useState({});
-    const [theme, setTheme] = useState("light");
+    const [theme, setTheme] = useState(() => darktThemePreference ? 'dark': 'light');
 
     useEffect(()=>{
         let userInSession = lookinSession("user");
