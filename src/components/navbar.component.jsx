@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { ThemeContext, UserContext } from "../App";
-import logo from "../imgs/logo.png";
+import Lightlogo from "../imgs/logo-light.png";
+import darklogo from "../imgs/logo-dark.png"
 import UserNavigationPanel from "./user-navigation.component";
 import axios from "axios";
 import { StoreinSession } from "../common/session";
@@ -63,7 +64,7 @@ const Navbar = () => {
     <>
       <nav className="navbar z-50">
         <Link to={"/"} className="flex-none w-12">
-          <img src={logo} alt="" className="w-full" />
+          <img src={theme == 'light' ? darklogo: Lightlogo} alt="" className="w-full" />
         </Link>
 
         <div
@@ -97,7 +98,7 @@ const Navbar = () => {
         </Link>
 
         <button className="w-12 h-12 rounded-full bg-grey relative hover:bg-black/10" onClick={changeTheme}>
-                <i className={`fi fi-${theme=='light'? 'rr-moon-stars': 'sr-brightness'} text-xl`}></i>
+                <i className={`fi fi-${theme=='light'? 'rr-moon-stars': 'sr-brightness'} t ext-xl`}></i>
         </button>
 
         { accessToken ? (
