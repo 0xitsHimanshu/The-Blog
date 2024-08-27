@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/navbar.component';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import UserAuthForm from './pages/userAuthForm.page';
 import { createContext, useEffect, useState } from 'react';
 import { lookinSession } from './common/session';
@@ -44,6 +45,7 @@ const App = () => {
     return (
       <ThemeContext.Provider  value={{theme, setTheme}}>
         <UserContext.Provider value={{userAuth, setUserAuth}}>
+          <SpeedInsights />
           <Routes>
             <Route path='/editor' element={<Editor />} />
             <Route path='/editor/:blog_id' element={<Editor />} />
